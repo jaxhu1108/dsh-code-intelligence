@@ -57,6 +57,8 @@ pnpm dsh plugin --profile web add github:jaxhu1108/dsh-code-intelligence
 
 Git 是代码住的地方、issue 提的地方、你现在读的这份 README 被编辑的地方。但它**不是**更新的来源：这么装插件照常能用，只是 DSH 没有办法检查或应用新版本。想升级，只能手动卸载再装一次。
 
+因为 `lib/` 是有意提交进仓库的，Git 装法不需要任何构建步骤。pnpm 可能会提示 `@ast-grep/cli` 的构建脚本被忽略 —— 这是预期内的，不影响使用。少了 `postinstall`，`ast-grep` 会在运行时解析平台二进制，而不是安装时：功能一切正常，只是每次调用多一点额外开销。想消掉那条提示，跑 `pnpm approve-builds` 并把 `@ast-grep/cli` 放行即可。
+
 ### 3. 从本地目录装（开发用）
 
 ```bash

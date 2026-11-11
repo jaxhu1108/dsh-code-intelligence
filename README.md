@@ -57,6 +57,8 @@ pnpm dsh plugin --profile web add github:jaxhu1108/dsh-code-intelligence
 
 Git is where the code lives, the issues are filed, and the README you're reading is edited. It is *not* where updates come from: install this way and the plugin works fine, but DSH has no way to check for or apply a newer version. Upgrading means removing and re-adding by hand.
 
+Because `lib/` is committed, a Git install needs no build step. pnpm may still print a note about `@ast-grep/cli` build scripts being ignored — that is expected and harmless. Without its `postinstall`, `ast-grep` resolves its platform binary at runtime instead of at install time: everything works, each call just carries a little extra overhead. If you would rather clear the warning, run `pnpm approve-builds` and allow `@ast-grep/cli`.
+
 ### 3. From a local checkout (for development)
 
 ```bash

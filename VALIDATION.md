@@ -55,6 +55,19 @@
 - **真实宿主工作区里 Kotlin 未返回结果**：在 `~/.dsh` 这类混杂大量 session 日志等非代码文件的目录里，`goToDefinition` 与 `hover` 均无结果。观察到 Kotlin LSP 进程持续高 CPU/内存（RSS 约 0.95–1.2 GB，索引超过 8 分钟仍在进行）。
 - 结论：Kotlin 属于实验性/可选增强，建议在正常 Kotlin 工程目录（有 `build.gradle.kts` 或 `pom.xml`）中使用；首次启动需等待索引。TypeScript 与 Python 是验证最充分的主力路径。
 
+## 发布后按真实用户路径验收（2026-11-11）
+
+发布到 GitHub 之后，用全新环境复现了小伙伴会走的路径，而不是只在源码目录里自测：
+
+- **全新 clone**：`git clone --depth 1 https://github.com/jaxhu1108/dsh-code-intelligence.git` → 仅 408 KB，无 `.runtime`、无 `node_modules`。
+- **全新 clone 安装**：`pnpm install --frozen-lockfile` → 7.2 秒成功，依赖按锁文件装上。
+- **全新 clone 测试**：`pnpm test` 10/10 通过；`lib/` 与源码 `cmp` 一致。
+- **无 Kotlin 降级**：不下载运行时时 `lsp-config` 只返回 `typescript` 与 `python` 两个 server，无异常。
+- **Kotlin 缺失提示**：`node scripts/fetch-kotlin.mjs --check` 报 `status: missing` 并给出下载命令，退出码 1。
+- **GitHub spec 安装**：`pnpm add github:jaxhu1108/dsh-code-intelligence` → 成功装上 `dsh-code-intelligence 0.1.0`；插件入口 `lib/index.js` 可正常加载。
+- **修正一个会挡住 Git 装法的缺陷**：最初 `package.json` 带 `prepare` 脚本，导致 pnpm 11 以 `ERR_PNPM_GIT_DEP_PREPARE_NOT_ALLOWED` 拒绝安装 git-hosted 包。因为 `lib/` 已提交且与源码逐字节一致，安装根本不需要构建步骤，已删除 `prepare` 并重新验证。
+- **pnpm 构建脚本提示**：`@ast-grep/cli` 的 `postinstall` 可能被 pnpm 拦截并给出 `ERR_PNPM_IGNORED_BUILDS`。实测此时 `ast-grep --version` 仍返回 `0.51.0`（运行时回退解析平台二进制），功能不受影响，只有轻微额外开销。README 已说明。
+
 ## 尚未动态验证
 
 `goToImplementation`、Windows/macOS 平台、进程运行中取消与超时、Kotlin 的外部 Gradle/Maven 依赖解析与项目 JDK 选择，均无动态验证。不要扩大为全语言、全平台或全部操作已测。
