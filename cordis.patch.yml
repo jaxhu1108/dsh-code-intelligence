@@ -1,0 +1,11 @@
+# Global Host services and tools; DSH supplies its native LSP packages.
+- insert:
+    - id: code-lsp
+      name: '@deepseek-ai/dsh-lsp'
+    - id: code-lsp-stdio
+      name: '@deepseek-ai/dsh-lsp-stdio'
+      config: !!js "process.getBuiltinModule('node:module').createRequire(baseUrl)('dsh-code-intelligence/lsp-config')"
+    - id: code-tool-lsp
+      name: '@deepseek-ai/dsh-tool-lsp'
+    - id: code-intelligence
+      name: 'dsh-code-intelligence'

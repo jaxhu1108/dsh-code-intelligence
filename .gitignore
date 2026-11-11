@@ -1,0 +1,10 @@
+# Dependencies
+node_modules/
+
+# Downloaded language runtimes (862 MB unpacked) are fetched on demand with
+# `pnpm run fetch-kotlin`; never commit them.
+.runtime/
+
+# Logs and OS cruft
+*.log
+.DS_Store
